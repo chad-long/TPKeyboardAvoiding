@@ -176,17 +176,33 @@ static const int kStateKey;
     CGFloat priorFieldOffset = CGRectGetMinY([self convertRect:priorTextField.frame fromView:priorTextField.superview]);
     for ( UIView *childView in view.subviews ) {
         if ( childView.hidden ) continue;
-        if ( ([childView isKindOfClass:[UITextField class]] || [childView isKindOfClass:[UITextView class]]) && childView.isUserInteractionEnabled) {
+        if ( ([childView isKindOfClass:[UITextField class]] || [childView isKindOfClass:[UITextView class]]) && childView.isUserInteractionEnabled)
+        {
             CGRect frame = [self convertRect:childView.frame fromView:view];
-            if ( childView != priorTextField
-                    && CGRectGetMinY(frame) >= priorFieldOffset
-                    && CGRectGetMinY(frame) < *minY &&
-                    !(frame.origin.y == priorTextField.frame.origin.y
-                      && frame.origin.x < priorTextField.frame.origin.x) ) {
+            CGFloat priorFieldOffsetX = CGRectGetMinX([self convertRect:priorTextField.frame fromView:priorTextField.superview]);
+
+            if (childView != priorTextField &&
+                CGRectGetMinY(frame) >= priorFieldOffset &&
+                CGRectGetMinY(frame) < *minY &&
+                !(CGRectGetMinY(frame) == priorFieldOffset &&
+                  CGRectGetMinX(frame) < priorFieldOffsetX))
+            {
                 *minY = CGRectGetMinY(frame);
                 *foundView = childView;
             }
-        } else {
+            
+//            if (childView != priorTextField &&
+//                CGRectGetMinY(frame) >= priorFieldOffset &&
+//                CGRectGetMinY(frame) < *minY &&
+//                !(frame.origin.y == priorTextField.frame.origin.y &&
+//                frame.origin.x < priorTextField.frame.origin.x))
+//            {
+//                *minY = CGRectGetMinY(frame);
+//                *foundView = childView;
+//            }
+        }
+        else
+        {
             [self TPKeyboardAvoiding_findTextFieldAfterTextField:priorTextField beneathView:childView minY:minY foundView:foundView];
         }
     }
